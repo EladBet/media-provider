@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #EEE;
+    font: 10px/13px 'Lucida Sans',sans-serif;
+}
+.wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
