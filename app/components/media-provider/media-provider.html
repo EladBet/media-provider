@@ -4,39 +4,49 @@
     <div class="page-filters">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
-                <div class="" id="bs-example-navbar-collapse-1">
-                    <form class="navbar-form navbar-left" role="search" ng-submit="vm.setSource()">
-                        <div class="form-group col-sm-3">
-                            <label for="Name">Profile</label>
-                            <select ng-change="vm.loadProfile()"  ng-model="vm.selected" class="form-control" ng-options="p.full for p in vm.profiles">
-                                <option value="">-- choose profile --</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-sm-3">
-                            <label for="Name">Url</label>
-                            <input type="text" class="form-control" ng-model="vm.url" id="url" placeholder="url">
-                        </div>
-                        <div class="form-group col-sm-3">
-                            <label for="Bio">Bio</label>
-                            <input type="text" class="form-control" id="bio"  ng-model="vm.activeProfile.bio" placeholder="Bio">
-                        </div>
-                        <div class="form-group col-sm-3">
-                            <button type="submit" class="btn btn-primary">Create</button>
-                            <label>
-                                <input type="checkbox" ng-model="vm.onlyPrivate"> Show Private
-                            </label>
-                        </div>
-                    </form>
 
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li ng-class="{active:vm.mode == 'link'}" ng-click="vm.mode = 'link'"><a href="#">Link</a></li>
+                        <li ng-class="{active:vm.mode == 'search'}" ng-click="vm.mode = 'search'"><a href="#">Search</a></li>
+                    </ul>
+                    <form name="form" class="navbar-form navbar-left" ng-submit="form.$valid && vm.setSource()">
+                        <div class="form-group">
+                            <select ng-model="vm.selectedResource" class="form-control" ng-options="r for r in vm.resources"></select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" ng-model="vm.url"  class="form-control" placeholder="Search" required>
+                        </div>
+                        <button type="submit" class="btn btn-default">Submit</button>
+                    </form>
                 </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->
         </nav>
     </div>
 
-    <div class="wrap">
-        <!-- Define all of the tiles: -->
-        <iframe ng-if="vm.ready" width="80%" height="500px" ng-src="{{vm.src}}">
-        </iframe>
+    <div id="main-wrap">
+        <div id="sidebar">
+            <div class="MenuWrap">
+                <div class="box" ng-repeat="v in vm.videos" ng-click="vm.loadSelected(v.id.videoId)">
+                    <div class="boxInner ListItem" >
+                        <div class="section">
+                            <div class="img">
+                                <img src="{{v.snippet.thumbnails.default.url}}" height="100px" width="100px" alt="Unavailable">
+                            </div>
+                            <div class="full">
+                                <span>{{v.snippet.title}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="content-wrap">
+            <div class="wrap">
+            <!-- Define all of the tiles: -->
+                <iframe ng-if="vm.ready" width="100%" height="500px" ng-src="{{vm.src}}">
+                </iframe>
+        </div></div>
     </div>
 
 </div>

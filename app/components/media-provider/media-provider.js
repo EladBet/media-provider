@@ -15,6 +15,9 @@ angular.module("media-provider", ['ngAnimate', 'ui.bootstrap' ])
     .controller("MediaProviderCtrl", [ '$scope', '$filter', '$http', '$sce', function ($scope, $filter, $http, $sce) {
         var vm = this;
         vm.videos = [];
+        vm.resources = ["YouTube"];
+        vm.selectedResource = vm.resources[0];
+        vm.mode = "link";
 
 
         //init();
@@ -22,14 +25,7 @@ angular.module("media-provider", ['ngAnimate', 'ui.bootstrap' ])
         //AIzaSyDTUo1rZ5yO1k4t6AmLFUKejSmlb3i5AGs
 
         function init(){
-            var url = 'https://www.googleapis.com/youtube/v3/search?part=id,snippet&q=tuto&type=video&key=AIzaSyDTUo1rZ5yO1k4t6AmLFUKejSmlb3i5AGs';
-            $http.get(url).then(function(res) {
-                if (res.data) {
-                    vm.videos = res.data.items;
-                }
-            }, function (reason){
-                alert('error');
-            });
+
         }
 
         function getIdFromURL(url){
@@ -38,11 +34,27 @@ angular.module("media-provider", ['ngAnimate', 'ui.bootstrap' ])
         }
 
         vm.setSource = function(){
-            var video_id  = getIdFromURL(vm.url);
-            vm.src = $sce.trustAsResourceUrl('https://www.youtube.com/embed/'+video_id+'?autoplay=1');
-            vm.ready = true;
-        }
+            if (vm.mode === 'link') {
+                var video_id = getIdFromURL(vm.url);
+                vm.src = $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + video_id + '?autoplay=1');
+                vm.ready = true;
+            }
+            else{
+                var url = 'https://www.googleapis.com/youtube/v3/search?part=id,snippet&q='+vm.url+'&type=video&key=AIzaSyDTUo1rZ5yO1k4t6AmLFUKejSmlb3i5AGs';
+                $http.get(url).then(function(res) {
+                    if (res.data) {
+                        vm.videos = res.data.items;
+                    }
+                }, function (reason){
+                    alert('error');
+                });
+            }
+        };
 
+        vm.loadSelected = function(video_id){
+            vm.src = $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + video_id + '?autoplay=1');
+            vm.ready = true;
+        };
 
 
     }]);

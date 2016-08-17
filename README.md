@@ -1,7 +1,17 @@
 # media-provider
-Profiles and inbox with angular and nodejs
 
-Angular1, bootstrap, nodejs
+Angular1.5, bootstrap, YouTube API
+
+Simple yet extendable app that allow to embed videos from different sources.
+The user can paste url or search video using the api.
+
+Support many url variation like:
+https://www.youtube.com/watch?v=6QjIHnb5Ivs
+https://youtu.be/6QjIHnb5Ivs?t=37
+https://www.youtube.com/watch?v=6QjIHnb5Ivs&feature=youtu.be#t=37
+https://youtu.be/6QjIHnb5Ivs
+
+Allow for maximum extendability in adding new “sources” e.g. Instagram.
 
 1.Fork and clone this repo
 
