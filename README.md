@@ -1,4 +1,4 @@
-# profiles-angular
+# media-provider
 Profiles and inbox with angular and nodejs
 
 Angular1, bootstrap, nodejs
@@ -11,4 +11,4 @@ Angular1, bootstrap, nodejs
 
 4.Run the server by using npm start
 
-5.Browse to http://localhost:8081/
+5.Browse to http://localhost:8000/
