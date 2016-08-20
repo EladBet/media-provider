@@ -1,4 +1,4 @@
-angular.module("media-provider", ['ngAnimate', 'ui.bootstrap' ])
+angular.module("media-provider", ['ngAnimate', 'ui.bootstrap', 'media-config' ])
     .directive("mediaProvider", [ function() {
         return {
             restrict: 'AE',
@@ -12,38 +12,38 @@ angular.module("media-provider", ['ngAnimate', 'ui.bootstrap' ])
     }])
 
     //controller
-    .controller("MediaProviderCtrl", [ '$scope', '$filter', '$http', '$sce', function ($scope, $filter, $http, $sce) {
+    .controller("MediaProviderCtrl", [ '$scope', '$filter', '$http', '$sce', 'mediaConfig', 'Reducer', function ($scope, $filter, $http, $sce, mediaConfig, Reducer) {
         var vm = this;
         vm.videos = [];
-        vm.resources = ["YouTube"];
+        vm.resources = mediaConfig;
         vm.selectedResource = vm.resources[0];
         vm.mode = "link";
 
 
-        //init();
-        ///
-        //AIzaSyDTUo1rZ5yO1k4t6AmLFUKejSmlb3i5AGs
+        $scope.$watch("vm.mode", function(newValue, old){
+            if (newValue !== old)
+                vm.videos = [];
+                vm.url = "";
+        });
 
-        function init(){
-
-        }
-
+        //Extract id from url
         function getIdFromURL(url){
-            var youtubeRegexp = /https?:\/\/(?:[0-9A-Z-]+\.)?(?:youtu\.be\/|youtube(?:-nocookie)?\.com\S*[^\w\s-])([\w-]{11})(?=[^\w-]|$)(?![?=&+%\w.-]*(?:['"][^<>]*>|<\/a>))[?=&+%\w.-]*/ig;
-            return url.replace(youtubeRegexp, '$1');
+            var regexp = vm.selectedResource.regex;
+            return url.replace(regexp, '$1');
         }
+
 
         vm.setSource = function(){
             if (vm.mode === 'link') {
                 var video_id = getIdFromURL(vm.url);
-                vm.src = $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + video_id + '?autoplay=1');
+                vm.src = $sce.trustAsResourceUrl(vm.selectedResource.embedUrl + video_id);
                 vm.ready = true;
             }
-            else{
-                var url = 'https://www.googleapis.com/youtube/v3/search?part=id,snippet&q='+vm.url+'&type=video&key=AIzaSyDTUo1rZ5yO1k4t6AmLFUKejSmlb3i5AGs';
+            else{//search
+                var url = vm.selectedResource.searchUrl + vm.url + '&key=' + vm.selectedResource.key;
                 $http.get(url).then(function(res) {
                     if (res.data) {
-                        vm.videos = res.data.items;
+                        vm.videos = Reducer.getVideos(vm.selectedResource.name, res.data.items);
                     }
                 }, function (reason){
                     alert('error');
@@ -51,13 +51,39 @@ angular.module("media-provider", ['ngAnimate', 'ui.bootstrap' ])
             }
         };
 
+        //embed video that was selected from the search result
         vm.loadSelected = function(video_id){
-            vm.src = $sce.trustAsResourceUrl('https://www.youtube.com/embed/' + video_id + '?autoplay=1');
+            vm.src = $sce.trustAsResourceUrl(vm.selectedResource.embedUrl + video_id);
             vm.ready = true;
         };
 
 
-    }]);
+    }])
+    .service('Reducer', function(){
+
+        function Video(id, title, image){
+            this.id = id;
+            this.title = title;
+            this.image = image;
+        }
+
+        return {
+            getVideos: function(resourceName ,items){
+                var res = [];
+                switch (resourceName){
+                    case "YouTube":
+                        for (var i=0; i<items.length; i++){
+                            var video = new Video(items[i].id.videoId, items[i].snippet.title, items[i].snippet.thumbnails.default.url);
+                            res.push(video);
+                        }
+                        break;
+                }
+
+                return res;
+            }
+        }
+    })
+;
 
 
 
