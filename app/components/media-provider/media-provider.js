@@ -1,4 +1,4 @@
-angular.module("media-provider", ['ngAnimate', 'ui.bootstrap', 'media-config' ])
+angular.module("media-provider", ['ngAnimate', 'media-config' ])
     .directive("mediaProvider", [ function() {
         return {
             restrict: 'AE',
